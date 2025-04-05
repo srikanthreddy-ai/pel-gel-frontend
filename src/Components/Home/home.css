@@ -1,0 +1,33 @@
+/* home.css */
+header{
+    background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+}
+/* Logo on the left side */
+header .logo img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  /* For the icons in the right part */
+  header .d-flex i {
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  header .d-flex i:hover {
+    transform: scale(1.1);
+  }
+  
+  /* Adjust the text link in the right part */
+  header .d-flex .ms-3 {
+    font-size: 1.5rem;
+  }
+
+  /* Hide the caret in the Dropdown.Toggle */
+.custom-dropdown-toggle::after {
+    display: none;  /* This hides the caret icon */
+  }
+  
+ 
+  
+  

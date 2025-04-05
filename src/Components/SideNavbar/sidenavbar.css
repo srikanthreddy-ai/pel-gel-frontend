@@ -1,0 +1,21 @@
+/* Add rotation effect for the arrow */
+.rotate-arrow {
+    transform: rotate(180deg);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  /* Smooth transition for dropdown */
+  .collapse {
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .collapse.show {
+    display: block;
+  }
+  
+  /* Align the arrow and text inline */
+  .nav-link d-flex {
+    display: inline-flex;
+    align-items: center;
+  }
+  
