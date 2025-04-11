@@ -17,7 +17,7 @@ const SideNavBar = ({ onNavItemClick }) => {
         top: '82px', // Ensure it's not overlapping with header
         left: 0,
         bottom: 0,
-        width: '250px',
+        width: '255px',
         backgroundColor: '#343a40', // Dark background for sidebar
         paddingTop: '20px',
         zIndex: 999,

@@ -39,18 +39,17 @@ const Home = () => {
     <div>  
     <Header/>
       <div className="content">
-    <div className='row'>
+    <div className='row' style={{width:'101%'}}>
         <div className="col-md-2">
         <SideNavBar onNavItemClick={handleNavItemClick}/>
         </div>
         <div className="col-md-10">
-            <div className="card shadow-dark">
-                <div className="card-body">
-                    <div style={{ marginLeft: '250px', padding: '20px' }}>
-                    <div className="container" style={{ marginLeft: '250px' }}>
-        {renderActiveComponent()}
-      </div>
-                    </div>
+            <div className="card shadow-dark" style={{height:'85vh',borderRadius:'10px'}}>
+                    <div>
+                    {/* <div className="container" style={{ marginLeft: '250px', overflowX: 'hidden',height: '75vh' }}> */}
+                      {renderActiveComponent()}
+                    {/* </div> */}
+
                 </div>
             </div>
         </div>
