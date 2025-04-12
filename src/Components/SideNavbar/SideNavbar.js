@@ -42,7 +42,7 @@ const SideNavBar = ({ onNavItemClick }) => {
             onClick={() => onNavItemClick('staff')}
             style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
           >
-            <i className="bi bi-person-lines-fill me-2"></i> Staff
+            <i className="bi bi-person-lines-fill me-2"></i> Timesheet
           </button>
         </li>
 
@@ -53,10 +53,18 @@ const SideNavBar = ({ onNavItemClick }) => {
             onClick={() => onNavItemClick('staffmanagment')}
             style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
           >
-            <i className="bi bi-person-lines-fill me-2"></i> Staff Management
+            <i className="bi bi-person-lines-fill me-2"></i> Employee
           </button>
         </li>
-
+        <li className="nav-item mb-3">
+          <button
+            className="nav-link text-white"
+            onClick={() => onNavItemClick('staffmanagment')}
+            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+          >
+            <i className="bi bi-person-lines-fill me-2"></i> Reports
+          </button>
+        </li>
         {/* Master Data Dropdown */}
         <li className="nav-item mb-3">
           <button
@@ -76,7 +84,7 @@ const SideNavBar = ({ onNavItemClick }) => {
                   onClick={() => onNavItemClick('category')}
                   style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
                 >
-                  <i className="bi bi-database-add me-2"></i> Category
+                  <i className="bi bi-database-add me-2"></i> Building Category
                 </button>
               </li>
               <li className="nav-item">
@@ -85,7 +93,7 @@ const SideNavBar = ({ onNavItemClick }) => {
                   onClick={() => onNavItemClick('subcategory')}
                   style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
                 >
-                  <i className="bi bi-clipboard-data me-2"></i> Subcategory
+                  <i className="bi bi-clipboard-data me-2"></i> Prod Nature
                 </button>
               </li>
             </ul>

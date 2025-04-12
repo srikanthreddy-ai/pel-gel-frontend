@@ -3,42 +3,54 @@ import EnhancedTable from "./Table";
 import AddStaffModal from "./AddStaffModal"; // Import the AddStaffModal component
 
 const StaffManagement = () => {
-    const [openModal, setOpenModal] = useState(false); // State to control modal visibility
+    const [openModal, setOpenModal] = useState(false); // Modal visibility
+    const [searchEmpCode, setSearchEmpCode] = useState(""); // Search input
+    const [searchResults, setSearchResults] = useState(); // Search results
+    const [refreshKey, setRefreshKey] = useState(0); // Force re-render key
 
     const handleOpenModal = () => {
-        setOpenModal(true); // Open modal when "Add Staff" button is clicked
+        setOpenModal(true);
     };
 
     const handleCloseModal = () => {
-        setOpenModal(false); // Close modal
+        setOpenModal(false);
+        setRefreshKey(prev => prev + 1); // Trigger table refresh
+    };
+
+    const handleSearchChange = (event) => {
+        setSearchEmpCode(event.target.value); 
+    };
+
+    const handleSearch = () => {
+        setSearchResults(searchEmpCode); 
+        console.log("Search Results:", searchResults); 
     };
 
     return (
         <div className="container" style={{ paddingTop: '20px' }}>
-            {/* Search Bar with Search Button on the Left */}
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <div className="d-flex align-items-center">
                     <input 
                         type="text" 
                         className="form-control" 
-                        placeholder="Search Staff..." 
+                        placeholder="Search by Employee Code..."
+                        value={searchEmpCode}
+                        onChange={handleSearchChange}
                         style={{ width: '300px', marginRight: '10px' }} 
                     />
-                    <button className="btn btn-secondary">Search</button>
+                    <button className="btn btn-secondary" onClick={handleSearch}>Search</button>
                 </div>
 
-                {/* Add Button on the Right */}
                 <button className="btn btn-primary" onClick={handleOpenModal}>
                     Add Staff
                 </button>
             </div>
 
-            {/* Dynamic Table */}
             <div className="mt-3">
-                <EnhancedTable />
+                {/* Pass refreshKey as a key to force re-render */}
+                <EnhancedTable key={refreshKey} empCode={searchResults} />
             </div>
 
-            {/* Render the AddStaffModal component when modal state is true */}
             <AddStaffModal open={openModal} onClose={handleCloseModal} />
         </div>
     );

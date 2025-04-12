@@ -7,68 +7,97 @@ import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import Typography from '@mui/material/Typography';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import Button from '@mui/material/Button';
+import axiosInstance from '../Utils/axiosInstance';
 
-// Dummy data for the table
-const dummyData = [
-  { employeeID: 101, name: 'John Doe', mailID: 'john.doe@example.com', joiningDate: '2020-01-01' },
-  { employeeID: 102, name: 'Jane Smith', mailID: 'jane.smith@example.com', joiningDate: '2021-02-15' },
-  { employeeID: 103, name: 'Robert Brown', mailID: 'robert.brown@example.com', joiningDate: '2019-10-25' },
-  { employeeID: 104, name: 'Alice Johnson', mailID: 'alice.johnson@example.com', joiningDate: '2018-11-13' },
-  { employeeID: 105, name: 'Michael Davis', mailID: 'michael.davis@example.com', joiningDate: '2022-05-06' },
-  { employeeID: 106, name: 'Emily Clark', mailID: 'emily.clark@example.com', joiningDate: '2023-03-22' },
-  { employeeID: 107, name: 'David Lee', mailID: 'david.lee@example.com', joiningDate: '2017-07-30' },
-  { employeeID: 108, name: 'Sophia Martinez', mailID: 'sophia.martinez@example.com', joiningDate: '2021-08-11' },
-  { employeeID: 109, name: 'William Taylor', mailID: 'william.taylor@example.com', joiningDate: '2020-12-10' },
-  { employeeID: 110, name: 'Emma Wilson', mailID: 'emma.wilson@example.com', joiningDate: '2021-01-05' },
-  { employeeID: 111, name: 'Oliver King', mailID: 'oliver.king@example.com', joiningDate: '2022-09-17' },
-  { employeeID: 112, name: 'Lucas Turner', mailID: 'lucas.turner@example.com', joiningDate: '2019-06-10' },
-];
-
-// Hardcoded column headers
 const headCells = [
-  { id: 'employeeID', label: 'Employee ID' },
-  { id: 'name', label: 'Name' },
-  { id: 'mailID', label: 'Mail ID' },
-  { id: 'joiningDate', label: 'Joining Date' },
+  { id: 'empCode', label: 'Employee Code' },
+  { id: 'fullName', label: 'Full Name' },
+  { id: 'email', label: 'Email' },
+  { id: 'designation', label: 'Designation' },
 ];
 
-export default function BasicEmployeeTable() {
-  const [rows, setRows] = useState([]);  // Holds the data for the table
-  const [page, setPage] = useState(0);   // Tracks current page
-  const [rowsPerPage] = useState(12);    // Set the default rows per page to 10
+export default function BasicEmployeeTable({ empCode }) {
+  const [rows, setRows] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage] = useState(12);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
 
+  // Fetch employee data when empCode changes
   useEffect(() => {
-    const startIndex = page * rowsPerPage;
-    const endIndex = startIndex + rowsPerPage;
+    const fetchData = async () => {
+      try {
+        const query = empCode ? `?empCode=${empCode}` : ''; // Only add empCode if provided
+        const response = await axiosInstance.get(`/employeesList${query}`);
+        console.log('Response data:', response.data);
 
-    // Get the slice of dummy data for the current page
-    const slicedRows = dummyData.slice(startIndex, endIndex);
+        if (Array.isArray(response.data.data)) {
+          const mappedData = response.data.data.map((employee) => ({
+            empCode: employee.empCode,
+            fullName: employee.fullName,
+            email: employee.email,
+            designation: employee.designation,
+            department: employee.department,
+            cader: employee.cader,
+            pfNo: employee.pfNo,
+            bankDetails: employee.bankDetails,
+          }));
 
-    setRows(slicedRows); // Set the rows for the current page
-  }, [page, rowsPerPage]);  // Re-run whenever page changes
+          setRows(mappedData);
+          setTotalItems(response.data.totalItems);
+          setTotalPages(response.data.totalPages);
+        } else {
+          console.error('Received data is not an array');
+        }
+      } catch (error) {
+        console.error('Error fetching employee data:', error);
+      }
+    };
+
+    fetchData();
+  }, [empCode]); // Re-fetch data whenever empCode changes
+
+  const paginatedRows = rows.slice(page * rowsPerPage, (page + 1) * rowsPerPage);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
+  const handleRowClick = (employee) => {
+    setSelectedEmployee(employee);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedEmployee(null);
+  };
+
   return (
     <Paper sx={{ width: '100%', mb: 2 }}>
-      <TableContainer sx={{ maxHeight: 450, overflow: 'auto' }}> {/* Increased the height to 450px */}
+      <TableContainer sx={{ maxHeight: 450, overflow: 'auto' }}>
         <Table sx={{ minWidth: 750 }} aria-label="Employee Table">
           {/* Header Row */}
           <TableRow>
             {headCells.map((headCell) => (
               <TableCell
                 key={headCell.id}
-                align="left"
+                align="center"
                 sx={{
-                  backgroundColor: 'rgb(52, 58, 64)',  // Dark background color for header
-                  color: 'white',  // White text color
-                  fontWeight: 'bold',  // Bold font for the header
-                  padding: '8px',  // Reduced padding for smaller height
-                  position: 'sticky',  // Make header sticky
-                  top: 0,  // Stick to the top of the table container
-                  zIndex: 1,  // Ensure header is above the table body
+                  backgroundColor: 'rgb(52, 58, 64)',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  padding: '12px',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 1,
                 }}
               >
                 <Typography variant="h6">{headCell.label}</Typography>
@@ -78,19 +107,20 @@ export default function BasicEmployeeTable() {
 
           {/* Table Body */}
           <TableBody>
-            {rows.map((row, index) => (
+            {Array.isArray(paginatedRows) && paginatedRows.map((row, index) => (
               <TableRow
                 hover
-                key={row.employeeID}
+                key={row.empCode}
                 sx={{
-                  backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff',  // Alternating row colors
-                  '&:hover': { backgroundColor: '#e0e0e0' }, // Hover effect for rows
+                  backgroundColor: index % 2 === 0 ? '#f9f9f9' : '#ffffff',
+                  '&:hover': { backgroundColor: '#e0e0e0' },
                 }}
+                onClick={() => handleRowClick(row)}
               >
-                <TableCell sx={{ padding: '8px' }}>{row.employeeID}</TableCell>
-                <TableCell sx={{ padding: '8px' }}>{row.name}</TableCell>
-                <TableCell sx={{ padding: '8px' }}>{row.mailID}</TableCell>
-                <TableCell sx={{ padding: '8px' }}>{row.joiningDate}</TableCell>
+                <TableCell sx={{ padding: '12px', textAlign: 'center' }}>{row.empCode}</TableCell>
+                <TableCell sx={{ padding: '12px', textAlign: 'center' }}>{row.fullName}</TableCell>
+                <TableCell sx={{ padding: '12px', textAlign: 'center' }}>{row.email}</TableCell>
+                <TableCell sx={{ padding: '12px', textAlign: 'center' }}>{row.designation}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -99,13 +129,49 @@ export default function BasicEmployeeTable() {
 
       {/* Pagination */}
       <TablePagination
-        rowsPerPageOptions={[]}  // Empty array to disable changing rows per page
+        rowsPerPageOptions={[12]}
         component="div"
-        count={dummyData.length}  // Total number of rows
-        rowsPerPage={rowsPerPage}  // Fixed number of rows per page
-        page={page}  // Current page
-        onPageChange={handleChangePage}  // Handle page change
+        count={totalItems}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        labelRowsPerPage=""
+        showFirstButton={true}
+        showLastButton={true}
+        labelDisplayedRows={({ from, to, count }) => `${from}-${to} of ${count}`}
       />
+
+      {/* Modal to show employee details */}
+      <Dialog open={openModal} onClose={handleCloseModal} maxWidth="md" fullWidth>
+        <DialogTitle>Employee Details</DialogTitle>
+        <DialogContent>
+          {selectedEmployee ? (
+            <div>
+              <Typography variant="h6">Full Name: {selectedEmployee.fullName}</Typography>
+              <Typography variant="body1">Employee Code: {selectedEmployee.empCode}</Typography>
+              <Typography variant="body1">Email: {selectedEmployee.email}</Typography>
+              <Typography variant="body1">Designation: {selectedEmployee.designation}</Typography>
+              <Typography variant="body1">Department: {selectedEmployee.department}</Typography>
+              <Typography variant="body1">Cader: {selectedEmployee.cader}</Typography>
+              <Typography variant="body1">PF No: {selectedEmployee.pfNo}</Typography>
+              {/* Render Bank Details */}
+              {selectedEmployee.bankDetails && (
+                <>
+                  <Typography variant="body1">Bank Name: {selectedEmployee.bankDetails.bankName}</Typography>
+                  <Typography variant="body1">Account Number: {selectedEmployee.bankDetails.accountNumber}</Typography>
+                  <Typography variant="body1">IFSC Code: {selectedEmployee.bankDetails.ifscCode}</Typography>
+                  <Typography variant="body1">Branch: {selectedEmployee.bankDetails.branchName}</Typography>
+                </>
+              )}
+            </div>
+          ) : (
+            <Typography variant="body1">Loading...</Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">Close</Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }

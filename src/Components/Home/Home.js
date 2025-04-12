@@ -2,7 +2,7 @@ import React ,{useState} from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import './home.css';  
 import SideNavBar from '../SideNavbar/SideNavbar';
-import { useEmail } from '../Utils/EmailContext';
+
 import Header from '../Header/Header';
 import Dashboard from '../Dashboard/Dashboard';
 import StaffManagement from '../StaffManagement/StaffManagement';
