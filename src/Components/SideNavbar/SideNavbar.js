@@ -96,6 +96,15 @@ const SideNavBar = ({ onNavItemClick }) => {
                   <i className="bi bi-clipboard-data me-2"></i> Prod Nature
                 </button>
               </li>
+              <li className="nav-item">
+                <button
+                  className="nav-link text-white"
+                  onClick={() => onNavItemClick('Shift')}
+                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
+                >
+                  <i className="bi bi-clipboard-data me-2"></i> Shift
+                </button>
+              </li>
             </ul>
           </div>
         </li>

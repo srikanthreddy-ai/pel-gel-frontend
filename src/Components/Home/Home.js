@@ -6,6 +6,7 @@ import SideNavBar from '../SideNavbar/SideNavbar';
 import Header from '../Header/Header';
 import Dashboard from '../Dashboard/Dashboard';
 import StaffManagement from '../StaffManagement/StaffManagement';
+import BuildingCategoryManagement from '../BuildingCategory/BuildingCategoryManagement'
 import Login from '../Login/Login';
 const Home = () => {
     const [activeComponent, setActiveComponent] = useState('dashboard'); // Default component
@@ -21,8 +22,8 @@ const Home = () => {
         //     return <Staff />;
           case 'staffmanagment':
             return <StaffManagement />;
-        //   case 'category':
-        //     return <Category />;
+          case 'category':
+            return <BuildingCategoryManagement />;
         //   case 'subcategory':
         //     return <SubCategory />;
         //   case 'settings':
