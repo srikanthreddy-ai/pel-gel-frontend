@@ -28,32 +28,41 @@ const StaffManagement = () => {
 
     return (
         <div className="container" style={{ paddingTop: '20px' }}>
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                <div className="d-flex align-items-center">
-                    <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="Search by Employee Code..."
-                        value={searchEmpCode}
-                        onChange={handleSearchChange}
-                        style={{ width: '300px', marginRight: '10px' }} 
-                    />
-                    <button className="btn btn-secondary" onClick={handleSearch}>Search</button>
-                </div>
-
-                <button className="btn btn-primary" onClick={handleOpenModal}>
-                    Add Staff
+          <div className="row align-items-center mb-3">
+            {/* Search Section */}
+            <div className="col-md-6 mb-2 mb-md-0">
+              <div className="d-flex flex-column flex-md-row align-items-stretch">
+                <input
+                  type="text"
+                  className="form-control me-md-2 mb-2 mb-md-0"
+                  placeholder="Search by Employee Code..."
+                  value={searchEmpCode}
+                  onChange={handleSearchChange}
+                />
+                <button className="btn btn-secondary" onClick={handleSearch}>
+                  Search
                 </button>
+              </div>
             </div>
-
-            <div className="mt-3">
-                {/* Pass refreshKey as a key to force re-render */}
-                <EnhancedTable key={refreshKey} empCode={searchResults} />
+      
+            {/* Add Button */}
+            <div className="col-md-2 text-md-end">
+              <button className="btn btn-primary w-100 w-md-auto" onClick={handleOpenModal}>
+                Add
+              </button>
             </div>
-
-            <AddStaffModal open={openModal} onClose={handleCloseModal} />
+          </div>
+      
+          {/* Table Section */}
+          <div className="mt-3">
+            <EnhancedTable key={refreshKey} empCode={searchResults} />
+          </div>
+      
+          {/* Modal for Adding Staff */}
+          <AddStaffModal open={openModal} onClose={handleCloseModal} />
         </div>
-    );
+      );
+      
 };
 
 export default StaffManagement;

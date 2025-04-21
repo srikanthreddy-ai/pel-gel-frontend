@@ -59,9 +59,8 @@ const AddAssemblyLineModal = ({ open, onClose }) => {
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Add Assembly Line</DialogTitle>
+            <DialogTitle>New Building</DialogTitle>
             <DialogContent>
-                <TextField label="Assembly Line Name" fullWidth value={name} onChange={(e) => setName(e.target.value)} margin="dense" />
                 <TextField label="Building ID" type="number" fullWidth value={buidlingId} onChange={(e) => setBuildingId(e.target.value)} margin="dense" />
                 <TextField label="Building Name" fullWidth value={budlingName} onChange={(e) => setBudlingName(e.target.value)} margin="dense" />
                 <TextField label="Building Code" fullWidth value={buidlingCode} onChange={(e) => setBuildingCode(e.target.value)} margin="dense" />

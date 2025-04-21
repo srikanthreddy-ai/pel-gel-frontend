@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {
   Dialog,
-  DialogActions,
-  DialogContent,
   DialogTitle,
   Button,
   TextField,
@@ -11,10 +9,12 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputLabel,
-  Divider,
-  Typography
+  DialogContent,
+  IconButton,
+  Typography,
+  Divider
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import axiosInstance from '../Utils/axiosInstance'; // Adjust the import path as needed
 const AddCustomerModal = ({ open, onClose }) => {
   const initialFormData = {
@@ -232,7 +232,14 @@ const AddCustomerModal = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
-      <DialogTitle>Add Customer Data</DialogTitle>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        New Employee
+        {/* Top-right close button */}
+        <IconButton edge="end" color="inherit" onClick={onClose} aria-label="close">
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+  
       <DialogContent sx={{ maxHeight: '70vh', overflowY: 'auto' }}>
         <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
           {formFields.map((section, index) => (
@@ -246,10 +253,8 @@ const AddCustomerModal = ({ open, onClose }) => {
               </Grid>
             </Box>
           ))}
+  
           <Box display="flex" justifyContent="flex-end" mt={3}>
-            <Button onClick={onClose} color="secondary" variant="contained" style={{ marginRight: 10 }}>
-              Close
-            </Button>
             <Button type="submit" variant="contained" color="primary">
               Submit
             </Button>

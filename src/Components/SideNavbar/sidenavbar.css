@@ -19,3 +19,20 @@
     align-items: center;
   }
   
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    padding: 0.5rem 0;
+    transition: background-color 0.2s ease;
+  }
+  
+  .nav-btn:hover {
+    background-color: #495057;
+    border-radius: 4px;
+  }
+  

@@ -5,9 +5,14 @@ import SideNavBar from '../SideNavbar/SideNavbar';
 
 import Header from '../Header/Header';
 import Dashboard from '../Dashboard/Dashboard';
-import StaffManagement from '../StaffManagement/StaffManagement';
-import BuildingCategoryManagement from '../BuildingCategory/BuildingCategoryManagement'
+import EmployeeManagement from '../Employees/EmployeeManagement';
+import ProdDeptManagement from '../ProdCategory/ProdDeptManagement'
+import ProdNatureManagement from '../ProdNature/ProdNatureManagement'
 import Login from '../Login/Login';
+import ReportsManagement from '../Reports/Reports'
+import ProdShifts from '../ProdShifts/ShiftManagement'
+import SettingsManagement from '../Settings/Settings'
+import TimeSheetManagement from '../TimeSheets/TimeSheetManagement'
 const Home = () => {
     const [activeComponent, setActiveComponent] = useState('dashboard'); // Default component
 
@@ -18,16 +23,20 @@ const Home = () => {
         switch (activeComponent) {
           case 'dashboard':
             return <Dashboard />;
-        //   case 'staff':
-        //     return <Staff />;
           case 'staffmanagment':
-            return <StaffManagement />;
-          case 'category':
-            return <BuildingCategoryManagement />;
-        //   case 'subcategory':
-        //     return <SubCategory />;
-        //   case 'settings':
-        //     return <Settings />;
+            return <EmployeeManagement />;
+          case 'prodcategory':
+            return <ProdDeptManagement />;
+          case 'prodnature':
+            return <ProdNatureManagement />;
+          case 'prodshifts':
+            return <ProdShifts />;
+          case 'reports':
+              return <ReportsManagement />;
+          case 'settings':
+            return <SettingsManagement />;
+          case 'timesheet':
+            return <TimeSheetManagement />;
           case 'logout':
             return <Login />;
           default:

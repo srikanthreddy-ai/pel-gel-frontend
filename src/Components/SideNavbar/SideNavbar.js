@@ -1,133 +1,76 @@
 import React, { useState } from 'react';
-import 'bootstrap-icons/font/bootstrap-icons.css'; // Bootstrap icons import
 import { Link } from 'react-router-dom';
-const SideNavBar = ({ onNavItemClick }) => {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
+import 'bootstrap-icons/font/bootstrap-icons.css';
+import './sidenavbar.css'; // Optional for custom styling
 
-  // Toggle dropdown open/close state
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+const SideNavBar = ({ onNavItemClick }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  const renderNavItem = (icon, label, onClick) => (
+    <li className="nav-item mb-2">
+      <button
+        className="nav-link text-white nav-btn"
+        onClick={onClick}
+      >
+        <i className={`bi ${icon} me-2`}></i> {label}
+      </button>
+    </li>
+  );
 
   return (
-    <div
-      className="sidenav d-flex flex-column p-3 text-white"
+    <aside
+      className="sidenav d-flex flex-column text-white"
       style={{
         position: 'fixed',
-        top: '82px', // Ensure it's not overlapping with header
+        top: '82px',
         left: 0,
         bottom: 0,
         width: '255px',
-        backgroundColor: '#343a40', // Dark background for sidebar
-        paddingTop: '20px',
+        backgroundColor: '#343a40',
+        padding: '1rem',
         zIndex: 999,
+        overflowY: 'auto',
       }}
     >
       <ul className="nav flex-column">
-        {/* Dashboard Item */}
-        <li className="nav-item mb-3">
-          <button
-            className="nav-link text-white"
-            onClick={() => onNavItemClick('dashboard')}
-            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-          >
-            <i className="bi bi-house-door me-2"></i> Dashboard
-          </button>
-        </li>
+        {renderNavItem('bi-house-door', 'Dashboard', () => onNavItemClick('dashboard'))}
+        {renderNavItem('bi-clock-history', 'Timesheet', () => onNavItemClick('timesheet'))}
+        {renderNavItem('bi-cash-stack', 'Allowance', () => onNavItemClick('timesheet'))}
+        {renderNavItem('bi-people-fill', 'Employee Management', () => onNavItemClick('staffmanagment'))}
+        {renderNavItem('bi-bar-chart-line', 'Reports', () => onNavItemClick('reports'))}
 
-        {/* Staff Item */}
-        <li className="nav-item mb-3">
+        {/* Master Data */}
+        <li className="nav-item mb-2">
           <button
-            className="nav-link text-white"
-            onClick={() => onNavItemClick('staff')}
-            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-          >
-            <i className="bi bi-person-lines-fill me-2"></i> Timesheet
-          </button>
-        </li>
-
-        {/* Staff Management Item */}
-        <li className="nav-item mb-3">
-          <button
-            className="nav-link text-white"
-            onClick={() => onNavItemClick('staffmanagment')}
-            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-          >
-            <i className="bi bi-person-lines-fill me-2"></i> Employee
-          </button>
-        </li>
-        <li className="nav-item mb-3">
-          <button
-            className="nav-link text-white"
-            onClick={() => onNavItemClick('staffmanagment')}
-            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-          >
-            <i className="bi bi-person-lines-fill me-2"></i> Reports
-          </button>
-        </li>
-        {/* Master Data Dropdown */}
-        <li className="nav-item mb-3">
-          <button
-            className="nav-link text-white"
+            className="nav-link text-white nav-btn d-flex align-items-center"
             onClick={toggleDropdown}
-            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', display: 'inline-flex', alignItems: 'center' }}
           >
-            <i className="bi bi-database me-2"></i> Master Data
+            <i className="bi bi-database me-2"></i>
+            Master Data
+            <i className={`bi ms-auto ${isDropdownOpen ? 'bi-chevron-up' : 'bi-chevron-down'}`}></i>
           </button>
 
-          {/* Dropdown Items */}
-          <div className={`collapse ${isDropdownOpen ? 'show' : ''}`} id="masterDataDropdown">
-            <ul className="nav flex-column ms-3">
-              <li className="nav-item">
-                <button
-                  className="nav-link text-white"
-                  onClick={() => onNavItemClick('category')}
-                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-                >
-                  <i className="bi bi-database-add me-2"></i> Building Category
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className="nav-link text-white"
-                  onClick={() => onNavItemClick('subcategory')}
-                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-                >
-                  <i className="bi bi-clipboard-data me-2"></i> Prod Nature
-                </button>
-              </li>
-              <li className="nav-item">
-                <button
-                  className="nav-link text-white"
-                  onClick={() => onNavItemClick('Shift')}
-                  style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-                >
-                  <i className="bi bi-clipboard-data me-2"></i> Shift
-                </button>
-              </li>
+          {isDropdownOpen && (
+            <ul className="nav flex-column ms-3 mt-2">
+              {renderNavItem('bi-database-add', 'Prod Category', () => onNavItemClick('prodcategory'))}
+              {renderNavItem('bi-clipboard-data', 'Prod Nature', () => onNavItemClick('prodnature'))}
+              {renderNavItem('bi-clipboard-data', 'Prod Shift', () => onNavItemClick('prodshifts'))}
             </ul>
-          </div>
+          )}
         </li>
 
-        {/* Settings Item */}
-        <li className="nav-item mb-3">
-          <button
-            className="nav-link text-white"
-            onClick={() => onNavItemClick('settings')}
-            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}
-          >
-            <i className="bi bi-gear me-2"></i> Settings
-          </button>
-        </li>
+        {renderNavItem('bi-gear', 'Settings', () => onNavItemClick('settings'))}
 
-        {/* Log Out Item */}
-        <li className="nav-item mb-3">
-          <Link to="/login" className="nav-link text-white">
+        {/* Log Out */}
+        <li className="nav-item mt-3">
+          <Link to="/login" className="nav-link text-white nav-btn">
             <i className="bi bi-box-arrow-right me-2"></i> Log Out
           </Link>
         </li>
       </ul>
-    </div>
+    </aside>
   );
 };
 
