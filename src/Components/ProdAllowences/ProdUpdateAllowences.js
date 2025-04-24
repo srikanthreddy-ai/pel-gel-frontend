@@ -39,7 +39,7 @@ const EditEmployeeModal = ({ open, onClose, employee, onSuccess }) => {
 
   const handleSubmit = async () => {
     try {
-      await axiosInstance.put(`/ProductionShift/${employee._id}`, formData); // Update API
+      await axiosInstance.put(`/updateAllowence/${employee._id}`, formData); // Update API
       onSuccess();
       onClose();
     } catch (err) {
@@ -49,55 +49,38 @@ const EditEmployeeModal = ({ open, onClose, employee, onSuccess }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth>
-      <DialogTitle>Edit Shift</DialogTitle>
+      <DialogTitle>Edit Allowence</DialogTitle>
       <DialogContent>
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Shift Name"
-          name="shiftName"
-          value={formData.shiftName}
-          onChange={handleChange}
-        />
-
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Shift Hours"
-          name="shiftHrs"
-          type="number"
-          value={formData.shiftHrs}
-          onChange={handleChange}
-        />
-
-        <TextField
-          fullWidth
-          margin="dense"
-          label="Start Time"
-          name="startTime"
-          type="time"
-          value={formData.startTime}
-          onChange={handleChange}
-          InputLabelProps={{ shrink: true }}
-          inputProps={{
-            step: 600, // 600 seconds = 10 minutes; use 900 for 15-minute steps
-          }}
-        />
-
-        <TextField
-          fullWidth
-          margin="dense"
-          label="End Time"
-          name="endTime"
-          type="time"
-          value={formData.endTime}
-          onChange={handleChange}
-          InputLabelProps={{ shrink: true }}
-          inputProps={{
-            step: 600, // 600 seconds = 10 minutes; use 900 for 15-minute steps
-          }}
-        />
-        <div
+              <TextField
+                fullWidth
+                margin="dense"
+                label="Allowence Name"
+                name="allowence"
+                value={formData.allowence}
+                onChange={handleChange}
+              />
+              <TextField
+                fullWidth
+                margin="dense"
+                label="shift Name"
+                name="shift"
+                placeHolder="Day/Night"
+                value={formData.shift}
+                onChange={handleChange}
+              />
+              <TextField
+                fullWidth
+                margin="dense"
+                label="Amount"
+                name="amount"
+                value={formData.amount}
+                onChange={handleChange}
+                InputLabelProps={{ shrink: true }}
+                inputProps={{
+                  step: 600, // 600 seconds = 10 minutes; use 900 for 15-minute steps
+                }}
+              />
+              <div
           style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
           <h4 style={{ marginRight: "10px" }}>Delete</h4>
           <FormControlLabel
@@ -111,7 +94,7 @@ const EditEmployeeModal = ({ open, onClose, employee, onSuccess }) => {
             }
           />
         </div>
-      </DialogContent>
+            </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="secondary">
           Cancel

@@ -13,6 +13,9 @@ import ReportsManagement from '../Reports/Reports'
 import ProdShifts from '../ProdShifts/ShiftManagement'
 import SettingsManagement from '../Settings/Settings'
 import TimeSheetManagement from '../TimeSheets/TimeSheetManagement'
+import WorkplansManagement from '../TimeSheets/TimeSheetList'
+import AllowencesManagement from '../Allowences/AllowenceManagement'
+import ProdAllowences from '../ProdAllowences/AllowencesManagement'
 const Home = () => {
     const [activeComponent, setActiveComponent] = useState('dashboard'); // Default component
 
@@ -31,6 +34,8 @@ const Home = () => {
             return <ProdNatureManagement />;
           case 'prodshifts':
             return <ProdShifts />;
+          case 'prodallowences':
+              return <ProdAllowences />;
           case 'reports':
               return <ReportsManagement />;
           case 'settings':
@@ -39,6 +44,10 @@ const Home = () => {
             return <TimeSheetManagement />;
           case 'logout':
             return <Login />;
+          case 'workplans':
+            return <WorkplansManagement />;
+          case 'allowences':
+            return <AllowencesManagement />;
           default:
             return <Dashboard />;
         }

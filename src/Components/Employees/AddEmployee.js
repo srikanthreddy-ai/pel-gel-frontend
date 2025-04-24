@@ -7,7 +7,8 @@ import {
   TextField,
   Button,
   Grid,
-  MenuItem
+  MenuItem,
+  Box
 } from "@mui/material";
 import axiosInstance from "../Utils/axiosInstance"; // Adjust the import path as needed
 import { toast, ToastContainer } from 'react-toastify';
@@ -47,8 +48,8 @@ const AddNature = ({ open, onClose, onAdded }) => {
       onClose();
       toast.success("Employee added successfully!");
     } catch (err) {
-      console.error("Failed to add employee", err);
-      toast.error("Failed to add employee. Please try again.");
+      console.error("Failed to add employee", err.response.data);
+      toast.error(`Messae:${err?.response?.data?.error}`);
     }
   };
 
@@ -348,7 +349,7 @@ const AddNature = ({ open, onClose, onAdded }) => {
         <Button onClick={handleSubmit} variant="contained" color="primary">
           Add
         </Button>
-        <ToastContainer position="top-right" autoClose={3000} />
+        <ToastContainer position="bottom-right" autoClose={1000} />
       </DialogActions>
     </Dialog>
   );

@@ -160,78 +160,78 @@ const EditEmployeeModal = ({ open, onClose, employee, onSuccess }) => {
           InputLabelProps={{ shrink: true }}
         />
 
-         <div style={{ marginTop: "1rem" }}>
-                  <h4>Incentives</h4>
-                  {formData.incentives.map((incentive, index) => (
-                    <div
-                      key={index}
-                      style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-                      <TextField
-                        label="Min"
-                        type="number"
-                        value={incentive.min}
-                        onChange={(e) =>
-                          handleIncentiveChange(
-                            index,
-                            "min",
-                            e.target.value,
-                            e.target.type
-                          )
-                        }
-                        fullWidth
-                      />
-                      <TextField
-                        label="Max"
-                        type="number"
-                        value={incentive.max}
-                        onChange={(e) =>
-                          handleIncentiveChange(
-                            index,
-                            "max",
-                            e.target.value,
-                            e.target.type
-                          )
-                        }
-                        fullWidth
-                      />
-                      <TextField
-                        label="Each"
-                        type="number"
-                        value={incentive.each}
-                        onChange={(e) =>
-                          handleIncentiveChange(
-                            index,
-                            "each",
-                            e.target.value,
-                            e.target.type
-                          )
-                        }
-                        fullWidth
-                      />
-                      <TextField
-                        label="Amount"
-                        type="number"
-                        value={incentive.amount}
-                        onChange={(e) =>
-                          handleIncentiveChange(
-                            index,
-                            "amount",
-                            e.target.value,
-                            e.target.type
-                          )
-                        }
-                        fullWidth
-                      />
-                      <Button color="error" onClick={() => removeIncentive(index)}>
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-        
-                  <Button variant="outlined" onClick={addIncentive}>
-                    + Add Incentive
-                  </Button>
-                </div>
+        <div style={{ marginTop: "1rem" }}>
+          <h4>Incentives</h4>
+          {formData.incentives.map((incentive, index) => (
+            <div
+              key={index}
+              style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+              <TextField
+                label="Min"
+                type="number"
+                value={incentive.min}
+                onChange={(e) =>
+                  handleIncentiveChange(
+                    index,
+                    "min",
+                    e.target.value,
+                    e.target.type
+                  )
+                }
+                fullWidth
+              />
+              <TextField
+                label="Max"
+                type="number"
+                value={incentive.max}
+                onChange={(e) =>
+                  handleIncentiveChange(
+                    index,
+                    "max",
+                    e.target.value,
+                    e.target.type
+                  )
+                }
+                fullWidth
+              />
+              <TextField
+                label="Each"
+                type="number"
+                value={incentive.each}
+                onChange={(e) =>
+                  handleIncentiveChange(
+                    index,
+                    "each",
+                    e.target.value,
+                    e.target.type
+                  )
+                }
+                fullWidth
+              />
+              <TextField
+                label="Amount"
+                type="number"
+                value={incentive.amount}
+                onChange={(e) =>
+                  handleIncentiveChange(
+                    index,
+                    "amount",
+                    e.target.value,
+                    e.target.type
+                  )
+                }
+                fullWidth
+              />
+              <Button color="error" onClick={() => removeIncentive(index)}>
+                Remove
+              </Button>
+            </div>
+          ))}
+
+          <Button variant="outlined" onClick={addIncentive}>
+            + Add Incentive
+          </Button>
+        </div>
 
         <div
           style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>

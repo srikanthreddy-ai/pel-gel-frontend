@@ -97,7 +97,7 @@ const ProdDeptManagement = ({ handleOpenModal }) => {
             </tr>
           ) : (
             data.map((nature, index) => (
-              <tr key={nature.id || index}>
+              <tr key={nature.id || index} style={nature.isDeleted ? { backgroundColor: '#ffe6e6', color: '#a00' } : {}}>
                 <td>{index + 1}</td>
                 <td>{nature.buildingCode}</td>
                 <td>{nature.buildingName}</td>

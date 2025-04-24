@@ -6,9 +6,7 @@ import {
   MDBRow,
   MDBCol,
   MDBInput,
-  MDBSpinner,
-  MDBCarousel,
-  MDBCarouselItem
+  MDBSpinner
 } from "mdb-react-ui-kit";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
@@ -16,121 +14,110 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false); // New state
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const email = document.getElementById("email").value;
-    const pass = document.getElementById("pass").value;
+    const { email, password } = formData;
 
-    if (!email || !pass) {
+    if (!email || !password) {
       setError("Please fill in both fields");
       return;
     }
 
     setError(null);
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post("/login", {
         username: email,
-        password: pass,
+        password,
       });
 
-      if (response.data) {
-        const token = response.data.token;
+      const { token } = response.data;
+      if (token) {
         sessionStorage.setItem("authToken", token);
         sessionStorage.setItem("userName", email);
         navigate("/home");
       } else {
         setError(response.data.message || "Login failed. Please try again.");
       }
-    } catch (error) {
-      console.error("Login error:", error);
+    } catch (err) {
+      console.error("Login error:", err);
       setError("Something went wrong. Please try again later.");
     } finally {
-      setLoading(false); // Stop loading regardless of outcome
+      setLoading(false);
     }
   };
 
   return (
-    <MDBContainer className="my-5 gradient-form">
-      <MDBRow>
-        <MDBCol col="6" className="mb-5">
-          <div className="d-flex flex-column ms-5">
-            <div className="text-center">
-              <img src="./PEL.png" style={{ width: "185px" }} alt="logo" />
-              <h4 className="mt-1 mb-5 pb-1"></h4>
+    <MDBContainer fluid className="gradient-form" style={{ minHeight: "100vh" }}>
+      <MDBRow className="d-flex align-items-center justify-content-center" style={{ minHeight: "100vh" }}>
+        <MDBCol
+          md="6"
+          className="d-flex flex-column justify-content-center align-items-center p-5"
+          style={{ backgroundColor: "#f8f9fa" }}
+        >
+          <div style={{ width: "100%", maxWidth: "400px" }}>
+            <div className="text-center mb-4">
+              <img src="./PEL.png" style={{ width: "150px" }} alt="PEL Logo" />
+              <h4 className="mt-3 mb-2">Welcome Back</h4>
+              <p className="text-muted">Please login to your account</p>
             </div>
 
-            <p>Please login to your account</p>
+            <form onSubmit={handleSubmit}>
+              <MDBInput
+                wrapperClass="mb-4"
+                label="Username"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                autoComplete="username"
+              />
+              <MDBInput
+                wrapperClass="mb-4"
+                label="Password"
+                id="pass"
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                autoComplete="current-password"
+              />
 
-            <MDBInput
-              wrapperClass="mb-4"
-              label="UserName"
-              id="email"
-              type="email"
-            />
-            <MDBInput
-              wrapperClass="mb-4"
-              label="Password"
-              id="pass"
-              type="password"
-            />
+              {error && <p className="text-danger text-center">{error}</p>}
 
-            {error && <p className="text-danger">{error}</p>}
-
-            <div className="text-center pt-1 mb-5 pb-1">
-              {loading ? (
-                <MDBBtn className="mb-4 w-100 gradient-custom-2" disabled>
-                  <MDBSpinner
-                    size="sm"
-                    role="status"
-                    tag="span"
-                    className="me-2"
-                  />
-                  Signing in...
+              <div className="text-center mb-3">
+                <MDBBtn className="w-100 gradient-custom-2" type="submit" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <MDBSpinner size="sm" role="status" tag="span" className="me-2" />
+                      Signing in...
+                    </>
+                  ) : (
+                    "Sign in"
+                  )}
                 </MDBBtn>
-              ) : (
-                <MDBBtn
-                  className="mb-4 w-100 gradient-custom-2"
-                  onClick={handleSubmit}>
-                  Sign in
-                </MDBBtn>
-              )}
+              </div>
+            </form>
+
+            <div className="text-center">
               <a className="text-muted" href="#!">
                 Forgot password?
               </a>
             </div>
           </div>
-        </MDBCol>
-
-        <MDBCol col="6" className="mb-5">
-          <MDBCarousel showIndicators showControls fade>
-            <MDBCarouselItem itemId={1}>
-              <img
-                src="./PEL.png"
-                className="d-block w-100"
-                alt="Slide 1"
-              />
-            </MDBCarouselItem>
-            <MDBCarouselItem itemId={2}>
-              <img
-                src="./PEL.png"
-                className="d-block w-100"
-                alt="Slide 2"
-              />
-            </MDBCarouselItem>
-            <MDBCarouselItem itemId={3}>
-              <img
-                src="./PEL.png"
-                className="d-block w-100"
-                alt="Slide 3"
-              />
-            </MDBCarouselItem>
-          </MDBCarousel>
         </MDBCol>
       </MDBRow>
     </MDBContainer>

@@ -13,6 +13,14 @@ const TimeSheetManagement = () => {
   const [selectedNature, setSelectedNature] = useState(null);
   const [selectedShift, setSelectedShift] = useState(null);
 
+  const [formData, setFormData] = useState({
+    productionType: "",
+    manpower: 0,
+    norms: 0,
+    shiftHrs: 0,
+    selectedDate: "", // Default to today's date
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [customerResults, setCustomerResults] = useState([]);
   const [selectedCustomers, setSelectedCustomers] = useState([]);
@@ -27,7 +35,10 @@ const TimeSheetManagement = () => {
           axiosInstance.get("/ProductionShift"),
         ]);
 
-        if (buildingRes.status === 200 && Array.isArray(buildingRes.data?.data)) {
+        if (
+          buildingRes.status === 200 &&
+          Array.isArray(buildingRes.data?.data)
+        ) {
           setBuildingsData(buildingRes.data.data);
         }
 
@@ -44,15 +55,26 @@ const TimeSheetManagement = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (selectedNature || selectedShift) {
+      setFormData((prev) => ({
+        ...prev,
+        productionType: selectedNature?.productionType || "",
+        manpower: selectedNature?.manpower || 0,
+        norms: selectedNature?.norms || 0,
+        shiftHrs: selectedShift?.shiftHrs || 0,
+      }));
+    }
+  }, [selectedNature, selectedShift]);
 
   useEffect(() => {
-    const updated = selectedCustomers.map((cust) => ({
-      ...cust,
-      incentive: calculateIncentive(cust),
-    }));
-    setSelectedCustomers(updated);
+    // const updated = selectedCustomers.map((cust) => ({
+    //   ...cust,
+    //   incentive: calculateIncentive(),
+    // }));
+    // setSelectedCustomers(updated);
   }, [formData.norms, formData.manpower]);
-  
+
   // Debounced Customer Search
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -69,7 +91,7 @@ const TimeSheetManagement = () => {
   const fetchCustomerList = async (query) => {
     try {
       setLoadingCustomers(true);
-      const res = await axiosInstance.get(/employeesList?empCode=${query});
+      const res = await axiosInstance.get(`/employeesList?empCode=${query}`);
       if (res.status === 200 && Array.isArray(res.data?.data)) {
         setCustomerResults(res.data.data);
       } else {
@@ -103,59 +125,159 @@ const TimeSheetManagement = () => {
     setSelectedShift(shift || null);
   };
 
-  // const handleCustomerSelect = (employee) => {
-  //   if (!selectedCustomers.find((c) => c.empCode === employee.empCode)) {
-  //     setSelectedCustomers((prev) => [...prev, employee]);
-  //   }
-  //   setSearchTerm("");
-  //   setCustomerResults([]);
-  // };
-
   const handleCustomerSelect = (customer) => {
-    // Prevent duplicates
     const alreadySelected = selectedCustomers.some(
       (c) => c.empCode === customer.empCode
     );
     if (alreadySelected) return;
-  
-    // Calculate incentive
-    const incentive = calculateIncentive(customer);
-  
-    // Add customer with incentive to the selected list
+
+    if (selectedCustomers.length >= selectedNature.manpower) {
+      alert("You can only select up to the number of manpower.");
+      return;
+    }
+
     const updatedCustomer = {
       ...customer,
-      incentive,
+      incentive: calculateIncentive(),
     };
-  
+
     setSelectedCustomers([...selectedCustomers, updatedCustomer]);
-    setSearchTerm(""); // clear search input
+    setSearchTerm("");
   };
 
   const handleRemoveCustomer = (empCode) => {
     setSelectedCustomers((prev) => prev.filter((c) => c.empCode !== empCode));
   };
-  
-  const calculateIncentive = (customer) => {
-    if (!customer.manpower || !customer.norms) return 0;
 
-    // Simple logic: total divided equally among all
-    const totalIncentive = customer.norms * 0.05; // say, 5% of norms
-    return totalIncentive / customer.manpower;
+  const handleAddCustomer = async (emp) => {
+    try {
+      const payload = {
+        productionDate: formData.selectedDate,
+        building_id: selectedBuilding,
+        nature_id: selectedNature.id,
+        employee_id: emp._id,
+        shift_id: selectedShift._id,
+        shiftName: selectedShift.shiftName,
+        shiftHrs: formData.shiftHrs,
+        manpower: formData.manpower,
+        employeeCode: emp.empCode,
+        incentiveAmount: emp.incentive,
+        productionType: selectedNature.productionType,
+        norms: formData.norms,
+      };
+      console.log("create timesheet:", payload); // Debugging line
+      await axiosInstance.post("/createTimeSheet", payload);
+      setSelectedCustomers((prev) =>
+        prev.map((c) =>
+          c.empCode === emp.empCode ? { ...c, isAdded: true } : c
+        )
+      );
+      toast.success("timesheed created successfully!");
+    } catch (err) {
+      console.error("Failed to create time sheet:", err);
+      if (err.response?.data?.message?.includes("duplicate key")) {
+        toast.error("Production Code already exists!");
+      } else {
+        toast.error(`Error: ${err.response.data.error}`);
+      }
+    }
   };
+
+  // const calculateIncentive = () => {
+  //   console.log("Calculating incentive...", selectedNature, selectedShift, formData.norms, formData.manpower, formData.shiftHrs);
+
+  //   if (!formData.norms || !formData.manpower) return 0;
+  //   const totalIncentive = formData.norms * 0.05;
+  //   return (totalIncentive / formData.manpower).toFixed(2);
+  // };
+  const calculateIncentive = () => {
+    const { norms, manpower, shiftHrs } = formData;
+
+    if (!norms || !manpower || !shiftHrs) return 0;
+    // ✅ If form values match the selectedNature config exactly, no incentive
+    if (
+      norms === selectedNature.norms &&
+      manpower === selectedNature.manpower &&
+      shiftHrs === selectedShift.shiftHrs
+    ) {
+      return 0;
+    }
+    console.log("Calculating incentive...", selectedNature, selectedShift, norms, manpower, shiftHrs);
+    let totalIncentive = 0;
+    const incentives = selectedNature.incentives || [];
+
+    if (
+      shiftHrs < selectedShift.shiftHrs ||
+      shiftHrs > selectedShift.shiftHrs
+    ) {
+
+    }
+    for (let i = 0; i < incentives.length; i++) {
+      const { min, max, amount, each } = incentives[i];
+      if (norms >= min && norms <= max) {
+        const eligibleUnits = Math.floor(norms / each);
+        totalIncentive = eligibleUnits * amount;
+        break;
+      }
+    }
+
+    return (totalIncentive / manpower).toFixed(2);
+  };
+
+const handleTimeSheetChange = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  setFormData((prev) => {
+    let updatedValue =
+      type === "checkbox" ? checked :
+      type === "number" ? Number(value) :
+      value;
+
+    const updatedData = {
+      ...prev,
+      [name]: updatedValue,
+    };
+
+    // ✨ If the changed field is "shiftHrs", also update norms
+    if (name === "shiftHrs") {
+      const newNorms = (selectedNature.norms/selectedShift.shiftHrs)*Number(value); // Default to 0 if not set
+      console.log("New Norms1:", newNorms);
+      updatedData.norms = Number(newNorms) || 0; // or any logic to calculate norms based on shiftHrs
+    }
+    if (name === "manpower") {
+      const newNorms = (selectedNature.norms/selectedNature.manpower)*Number(value); // Default to 0 if not set
+      console.log("New Norms2:", newNorms);
+      updatedData.norms = Number(newNorms) || 0; // or any logic to calculate norms based on shiftHrs
+    }
+
+    console.log("Updated Form Data:", updatedData, name);
+    return updatedData;
+  });
+};
+
   return (
     <div className="container mt-4">
       <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="mb-4">Timesheet Entry</h2>
 
-      {/* Row: Building + Nature + Shift */}
+      {/* Building + Nature + Shift */}
       <div className="row mb-3">
-        <div className="col-md-4">
+        <div className="col-md-3">
+          <label className="form-label">Production Date</label>
+          <input
+            name="selectedDate"
+            type="date"
+            className="form-control"
+            onChange={handleTimeSheetChange}
+            value={formData.selectedDate}
+          />
+        </div>
+        <div className="col-md-3">
           <label className="form-label">Production Building</label>
           <select
             className="form-select"
             onChange={handleBuildingChange}
-            value={selectedBuilding}
-          >
+            value={selectedBuilding}>
             <option value="">Select Building</option>
             {buildingsData.map((b) => (
               <option key={b.id} value={b.id}>
@@ -165,14 +287,13 @@ const TimeSheetManagement = () => {
           </select>
         </div>
 
-        <div className="col-md-4">
+        <div className="col-md-3">
           <label className="form-label">Production Nature</label>
           <select
             className="form-select"
             onChange={handleNatureChange}
             value={selectedNature?.id || ""}
-            disabled={availableNatures.length === 0}
-          >
+            disabled={!availableNatures.length}>
             <option value="">Select Nature</option>
             {availableNatures.map((n) => (
               <option key={n.id} value={n.id}>
@@ -182,14 +303,13 @@ const TimeSheetManagement = () => {
           </select>
         </div>
 
-        <div className="col-md-4">
+        <div className="col-md-3">
           <label className="form-label">Production Shift</label>
           <select
             className="form-select"
             onChange={handleShiftChange}
             value={selectedShift?._id || ""}
-            disabled={availableShifts.length === 0}
-          >
+            disabled={!availableShifts.length}>
             <option value="">Select Shift</option>
             {availableShifts.map((s) => (
               <option key={s._id} value={s._id}>
@@ -200,24 +320,46 @@ const TimeSheetManagement = () => {
         </div>
       </div>
 
-      {/* Auto-populated fields */}
+      {/* Auto-populated Fields */}
       {selectedNature && selectedShift && (
         <div className="row mb-3">
           <div className="col-md-3">
             <label className="form-label">Production Type</label>
-            <input className="form-control" value={selectedNature.productionType} readOnly />
+            <input
+              className="form-control"
+              value={formData.productionType}
+              readOnly
+            />
           </div>
           <div className="col-md-3">
-            <label className="form-label">Manpower</label>
-            <input className="form-control" value={selectedNature.manpower}  />
+            <label className="form-label">Man power</label>
+            <input
+              type="Number"
+              className="form-control"
+              name="manpower"
+              onChange={handleTimeSheetChange}
+              value={formData.manpower}
+            />
           </div>
           <div className="col-md-3">
             <label className="form-label">Norms</label>
-            <input className="form-control" value={selectedNature.norms}  />
+            <input
+              type="Number"
+              className="form-control"
+              name="norms"
+              onChange={handleTimeSheetChange}
+              value={formData.norms}
+            />
           </div>
           <div className="col-md-3">
             <label className="form-label">Shift Hr's</label>
-            <input className="form-control" value={selectedShift.shiftHrs}  />
+            <input
+              type="Number"
+              className="form-control"
+              name="shiftHrs"
+              onChange={handleTimeSheetChange}
+              value={formData.shiftHrs}
+            />
           </div>
         </div>
       )}
@@ -242,8 +384,7 @@ const TimeSheetManagement = () => {
                   key={i}
                   className="list-group-item list-group-item-action"
                   style={{ cursor: "pointer" }}
-                  onClick={() => handleCustomerSelect(emp)}
-                >
+                  onClick={() => handleCustomerSelect(emp)}>
                   {emp.fullName}
                 </li>
               ))
@@ -265,7 +406,8 @@ const TimeSheetManagement = () => {
                 <th>Customer Name</th>
                 <th>Employee Code</th>
                 <th>Incentive</th>
-                <th>Action</th>
+                <th>Add</th>
+                <th>Remove</th>
               </tr>
             </thead>
             <tbody>
@@ -273,13 +415,21 @@ const TimeSheetManagement = () => {
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{customer.fullName}</td>
+                  <td>{customer.empCode}</td>
                   <td>{customer.incentive}</td>
-                  <td>{customer.designation}</td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-success"
+                      onClick={() => handleAddCustomer(customer)}
+                      disabled={customer.isAdded}>
+                      {customer.isAdded ? "Added" : "Add"}
+                    </button>
+                  </td>
                   <td>
                     <button
                       className="btn btn-sm btn-danger"
                       onClick={() => handleRemoveCustomer(customer.empCode)}
-                    >
+                      disabled={customer.isAdded}>
                       Remove
                     </button>
                   </td>
@@ -293,4 +443,4 @@ const TimeSheetManagement = () => {
   );
 };
 
-export default TimeSheetManagement; 
+export default TimeSheetManagement;
