@@ -1,1 +1,1 @@
-# pel-gel-fronend
+# pel-gel-frontend
