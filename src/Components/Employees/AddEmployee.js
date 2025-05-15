@@ -8,10 +8,10 @@ import {
   Button,
   Grid,
   MenuItem,
-  Box
+  Box,
 } from "@mui/material";
 import axiosInstance from "../Utils/axiosInstance"; // Adjust the import path as needed
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 
 const AddNature = ({ open, onClose, onAdded }) => {
   const [formData, setFormData] = useState({
@@ -44,6 +44,28 @@ const AddNature = ({ open, onClose, onAdded }) => {
   const handleSubmit = async () => {
     try {
       await axiosInstance.post("/employees", formData); // 🔁 Replace with your actual API endpoint
+      setFormData({
+        title: "",
+        firstName: "",
+        middleName: "",
+        lastName: "",
+        email: "",
+        department: "",
+        cader: "",
+        empCode: "",
+        designation: "",
+        pfNumber: "",
+        basic: "",
+        hra: "",
+        ca: "",
+        sa: "",
+        dateOfProbation: "",
+        uanNumber: "",
+        dateOfBirth: "",
+        dateOfJoining: "",
+        sonOf: "",
+        bankDetails: {},
+      });
       onAdded(); // callback to refresh data
       onClose();
       toast.success("Employee added successfully!");

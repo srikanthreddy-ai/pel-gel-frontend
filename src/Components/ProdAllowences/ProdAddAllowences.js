@@ -8,6 +8,7 @@ import {
   Button,
 } from "@mui/material";
 import axiosInstance from "../Utils/axiosInstance"; // Adjust the import path as needed
+import { toast, ToastContainer } from "react-toastify";
 
 const AddNature = ({ open, onClose, onAdded }) => {
   const [formData, setFormData] = useState({
@@ -27,10 +28,15 @@ const AddNature = ({ open, onClose, onAdded }) => {
   const handleSubmit = async () => {
     try {
       await axiosInstance.post("/createAllowence", formData); // 🔁 Replace with your actual API endpoint
+      setFormData({ allowence: "", shift: "", amount: "" });
       onAdded(); // callback to refresh data
       onClose();
     } catch (err) {
-      console.error("Failed to add employee", err);
+      console.error("Failed to add allowence", err);
+      toast.error(
+        err.response.data.error ||
+          "Failed to add allowence! Please try again later."
+      );
     }
   };
 
@@ -45,6 +51,7 @@ const AddNature = ({ open, onClose, onAdded }) => {
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth>
+      <ToastContainer position="top-right" autoClose={3000} />
       <DialogTitle>New Allowence</DialogTitle>
       <DialogContent>
         <TextField

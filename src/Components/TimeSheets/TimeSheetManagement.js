@@ -213,21 +213,25 @@ const TimeSheetManagement = () => {
     let totalIncentive = 0;
     const incentives = selectedNature.incentives || [];
 
-    if (
-      shiftHrs < selectedShift.shiftHrs ||
-      shiftHrs > selectedShift.shiftHrs
-    ) {
-    }
-    for (let i = 0; i < incentives.length; i++) {
-      const { min, max, amount, each } = incentives[i];
-      if (norms >= min && norms <= max) {
-        const eligibleUnits = Math.floor(norms / each);
+    if (norms < selectedNature.norms || norms > selectedNature.norms) {
+      // If norms are less than or greater than the selectedNature's norms, calculate incentive
+      const extraNorms = Math.abs(norms - selectedNature.norms);
+      const match = incentives.find(r =>
+        extraNorms >= r.min && (r.max == null || extraNorms <= r.max)
+      );
+      if (!match) {
+        console.log("No matching incentive found for extra norms:", extraNorms);
+        return 0; // No incentive if no match found
+      }else {
+        console.log("Matching incentive found:", match);
+        const { amount, each } = match;
+        const eligibleUnits = Math.floor(extraNorms / each);
         totalIncentive = eligibleUnits * amount;
-        break;
+        console.log("Eligible Units:", eligibleUnits, "Total Incentive:", totalIncentive);
+        return totalIncentive.toFixed(2);  
       }
     }
-
-    return (totalIncentive / manpower).toFixed(2);
+    console.log("Incentives:", incentives);
   };
 
   const handleTimeSheetChange = (e) => {
