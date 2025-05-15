@@ -2,8 +2,8 @@ import axios from 'axios';
 
 // Create a custom Axios instance
 const axiosInstance = axios.create({
-  // baseURL: 'https://pel-gel-backend.onrender.com/v1/api', // Set your API base URL here
-  baseURL: 'http://localhost:5000/v1/api', // Set your API base URL here
+  baseURL: 'https://pel-gel-backend.onrender.com/v1/api', // Set your API base URL here
+  // baseURL: 'http://localhost:5000/v1/api', // Set your API base URL here
   headers: {
     'Content-Type': 'application/json', // Adjust headers if needed
   },
