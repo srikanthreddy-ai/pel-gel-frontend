@@ -58,8 +58,8 @@ const SideNavBar = ({ onNavItemClick }) => {
       <ul className="nav flex-column">
         {renderNavItem('bi-house-door', 'Dashboard', () => onNavItemClick('dashboard'))}
 
-        {renderDropdown('TimeSheet', 'bi-database', 'timesheet', [
-          { icon: 'bi-database-add', label: 'Timesheet Entry', key: 'timesheet' },
+        {renderDropdown('Incentives', 'bi-database', 'timesheet', [
+          { icon: 'bi-database-add', label: 'New Entry', key: 'timesheet' },
           { icon: 'bi-database-add', label: 'workPlans', key: 'workplans' },
           { icon: 'bi-clipboard-data', label: 'Allowances', key: 'allowences' },
         ])}
@@ -72,6 +72,7 @@ const SideNavBar = ({ onNavItemClick }) => {
           { icon: 'bi-clipboard-data', label: 'Prod Nature', key: 'prodnature' },
           { icon: 'bi-clipboard-data', label: 'Prod Shift', key: 'prodshifts' },
           { icon: 'bi-clipboard-data', label: 'Prod Allowences', key: 'prodallowences' },
+          { icon: 'bi-clipboard-data', label: 'Bulk Upload', key: 'bulkupload' },
         ])}
 
         {renderNavItem('bi-gear', 'Settings', () => onNavItemClick('settings'))}

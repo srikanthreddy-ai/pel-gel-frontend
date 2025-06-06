@@ -16,6 +16,7 @@ import TimeSheetManagement from '../TimeSheets/TimeSheetManagement'
 import WorkplansManagement from '../TimeSheets/TimeSheetList'
 import AllowencesManagement from '../Allowences/AllowenceManagement'
 import ProdAllowences from '../ProdAllowences/AllowencesManagement'
+import BulkUploads from '../BulkUploads/BulkUpload'
 const Home = () => {
     const [activeComponent, setActiveComponent] = useState('dashboard'); // Default component
 
@@ -48,6 +49,8 @@ const Home = () => {
             return <WorkplansManagement />;
           case 'allowences':
             return <AllowencesManagement />;
+          case 'bulkupload':
+            return <BulkUploads />;
           default:
             return <Dashboard />;
         }
